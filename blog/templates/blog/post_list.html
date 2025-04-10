@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>글 목록</title>
+</head>
+<body>
+    <h1>글 목록</h1>
+    <ul>
+        {% for post in posts %}
+            <li>
+                <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>
+                <br>
+                <small>{{ post.created_at }}</small>
+                <p>{{ post.content|truncatechars:100 }}</p>
+            </li>
+            <hr>
+        {% empty %}
+            <p>글이 없습니다.</p>
+        {% endfor %}
+    </ul>
+</body>
+</html>
