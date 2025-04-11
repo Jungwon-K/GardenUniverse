@@ -1,9 +1,11 @@
+import json
 from django.shortcuts import render, get_object_or_404
 from .models import Post
 from .utils import render_markdown
 from django.shortcuts import render, redirect
 from .models import Post
 from .forms import PostForm
+from django.http import JsonResponse
 
 def post_create(request):
     if request.method == 'POST':
@@ -24,3 +26,23 @@ def post_detail(request, pk):
 def post_list(request):
     posts = Post.objects.order_by('-created_at')
     return render(request, 'blog/post_list.html', {'posts': posts})
+
+def graph_data(request):
+    nodes = []
+    links = []
+
+    posts = Post.objects.prefetch_related('topics')
+
+    for post in posts:
+        nodes.append({"id": post.title, "group": "post"})
+        for topic in post.topics.all():
+            nodes.append({"id": topic.name, "group": "topic"})
+            links.append({"source": post.title, "target": topic.name})
+
+    unique_nodes = {node['id']: node for node in nodes}.values()
+
+    return JsonResponse({"nodes": list(unique_nodes), "links": links})
+
+def graph_view(request):
+    return render(request, 'blog/graph.html')
+
