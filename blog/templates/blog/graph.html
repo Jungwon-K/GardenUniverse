@@ -1,105 +1,80 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>Graph View</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        svg {
-            width: 100%;
-            height: 90vh;
+{% extends 'blog/base.html' %}
+
+{% block title %}시각화 - GardenUniverse{% endblock %}
+
+{% block content %}
+<h1>🧠 지식 연결 그래프</h1>
+<svg style="width: 100%; height: 80vh;"></svg>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+fetch("/graph/data/")
+    .then(res => res.json())
+    .then(data => {
+        const svg = d3.select("svg");
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        const simulation = d3.forceSimulation(data.nodes)
+            .force("link", d3.forceLink(data.links).id(d => d.id).distance(100))
+            .force("charge", d3.forceManyBody().strength(-300))
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
+        const link = svg.append("g")
+            .attr("stroke", "#aaa")
+            .selectAll("line")
+            .data(data.links)
+            .join("line");
+
+        const node = svg.append("g")
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 1.5)
+            .selectAll("circle")
+            .data(data.nodes)
+            .join("circle")
+            .attr("r", d => d.group === "topic" ? 15 : 8)
+            .attr("fill", d => d.group === "topic" ? "#ffab00" : "#66bb6a")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        const label = svg.append("g")
+            .selectAll("text")
+            .data(data.nodes)
+            .join("text")
+            .text(d => d.id)
+            .attr("x", 6)
+            .attr("y", 3);
+
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+            node
+                .attr("cx", d => d.x)
+                .attr("cy", d => d.y);
+            label
+                .attr("x", d => d.x + 10)
+                .attr("y", d => d.y);
+        });
+
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
         }
-        circle {
-            stroke: #fff;
-            stroke-width: 1.5px;
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
         }
-        text {
-            font: 12px sans-serif;
-            pointer-events: none;
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
         }
-    </style>
-</head>
-<body>
-    <h2>🧠 지식 연결 그래프</h2>
-    <svg></svg>
-
-    <script>
-        fetch("/graph/data/")
-            .then(res => res.json())
-            .then(data => {
-                const svg = d3.select("svg");
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-
-                const simulation = d3.forceSimulation(data.nodes)
-                    .force("link", d3.forceLink(data.links).id(d => d.id).distance(100))
-                    .force("charge", d3.forceManyBody().strength(-300))
-                    .force("center", d3.forceCenter(width / 2, height / 2));
-
-                const link = svg.append("g")
-                    .attr("stroke", "#aaa")
-                    .selectAll("line")
-                    .data(data.links)
-                    .join("line");
-
-                const node = svg.append("g")
-                    .attr("stroke", "#fff")
-                    .attr("stroke-width", 1.5)
-                    .selectAll("circle")
-                    .data(data.nodes)
-                    .join("circle")
-                    .attr("r", d => d.group === "topic" ? 15 : 8)
-                    .attr("fill", d => d.group === "topic" ? "#ffab00" : "#66bb6a")
-                    .call(drag(simulation));
-
-                const label = svg.append("g")
-                    .selectAll("text")
-                    .data(data.nodes)
-                    .join("text")
-                    .text(d => d.id)
-                    .attr("x", 6)
-                    .attr("y", 3);
-
-                simulation.on("tick", () => {
-                    link
-                        .attr("x1", d => d.source.x)
-                        .attr("y1", d => d.source.y)
-                        .attr("x2", d => d.target.x)
-                        .attr("y2", d => d.target.y);
-
-                    node
-                        .attr("cx", d => d.x)
-                        .attr("cy", d => d.y);
-
-                    label
-                        .attr("x", d => d.x + 10)
-                        .attr("y", d => d.y);
-                });
-
-                function drag(simulation) {
-                    function dragstarted(event, d) {
-                        if (!event.active) simulation.alphaTarget(0.3).restart();
-                        d.fx = d.x;
-                        d.fy = d.y;
-                    }
-
-                    function dragged(event, d) {
-                        d.fx = event.x;
-                        d.fy = event.y;
-                    }
-
-                    function dragended(event, d) {
-                        if (!event.active) simulation.alphaTarget(0);
-                        d.fx = null;
-                        d.fy = null;
-                    }
-
-                    return d3.drag()
-                        .on("start", dragstarted)
-                        .on("drag", dragged)
-                        .on("end", dragended);
-                }
-            });
-    </script>
-</body>
-</html>
+    });
+</script>
+{% endblock %}

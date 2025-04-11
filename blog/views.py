@@ -46,3 +46,5 @@ def graph_data(request):
 def graph_view(request):
     return render(request, 'blog/graph.html')
 
+def home(request):
+    return render(request, 'blog/home.html')

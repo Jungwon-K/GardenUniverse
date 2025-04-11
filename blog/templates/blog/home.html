@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}홈 - GardenUniverse{% endblock %}
+
+{% block content %}
+<h1>🌱 Welcome to GardenUniverse</h1>
+<p>당신의 생각과 공부가 연결되는 공간입니다.</p>
+
+<hr>
+
+<div style="text-align: center;">
+    <a class="button" href="{% url 'post_list' %}">📚 글 목록 보기</a>
+    <a class="button" href="{% url 'post_create' %}">✍️ 글 작성하기</a>
+    <a class="button" href="{% url 'graph_view' %}">🧠 시각화 보기</a>
+</div>
+{% endblock %}

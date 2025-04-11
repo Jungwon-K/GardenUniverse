@@ -1,18 +1,15 @@
-<!-- post_detail.html -->
+{% extends 'blog/base.html' %}
 
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ post.title }}</title>
-</head>
-<body>
-    <h1>{{ post.title }}</h1>
-    <p><small>{{ post.created_at }}</small></p>
-    
-    <hr>
-    <div class="post-content">
-        {{ post.content|safe }}
-    </div>
-</body>
-</html>
+{% block title %}{{ post.title }} - GardenUniverse{% endblock %}
+
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p><small>{{ post.created_at }}</small></p>
+<hr>
+{{ post.content|safe }}
+
+<hr>
+<div>
+    <a href="{% url 'post_list' %}">← 글 목록</a>
+</div>
+{% endblock %}
