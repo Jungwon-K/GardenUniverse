@@ -41,8 +41,20 @@
     <div class="navbar">
         <a href="{% url 'home' %}">🏠 홈</a>
         <a href="{% url 'post_list' %}">📚 글 목록</a>
-        <a href="{% url 'post_create' %}">✍️ 글 쓰기</a>
         <a href="{% url 'graph_view' %}">🧠 시각화</a>
+    
+        {% if user.is_authenticated %}
+            <a href="{% url 'post_create' %}">✍️ 글 쓰기</a>
+            <span style="color:white; margin-left: 10px;">{{ user.username }}</span>
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" style="background:none; border:none; color:white; cursor:pointer;">
+                    🚪 로그아웃
+                </button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">🔐 로그인</a>
+        {% endif %}
     </div>
 
     {% block content %}

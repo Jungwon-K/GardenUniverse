@@ -6,7 +6,9 @@ from django.shortcuts import render, redirect
 from .models import Post
 from .forms import PostForm
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def post_create(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
