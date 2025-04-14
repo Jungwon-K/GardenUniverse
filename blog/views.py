@@ -7,6 +7,8 @@ from .models import Post
 from .forms import PostForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import UpdateView, DeleteView
+from django.urls import reverse_lazy
 
 @login_required
 def post_create(request):
@@ -28,6 +30,20 @@ def post_detail(request, pk):
 def post_list(request):
     posts = Post.objects.order_by('-created_at')
     return render(request, 'blog/post_list.html', {'posts': posts})
+
+class PostUpdateView(UpdateView):
+    model = Post
+    fields = ['title', 'content', 'topics']
+    template_name = 'blog/post_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.object.pk})
+    
+class PostDeleteView(DeleteView):
+    model = Post
+    template_name = 'blog/post_confirm_delete.html'
+    success_url = reverse_lazy('post_list')
+    
 
 def graph_data(request):
     nodes = []

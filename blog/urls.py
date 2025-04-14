@@ -11,5 +11,7 @@ urlpatterns = [
     path('graph/data/', views.graph_data, name='graph_data'),
     path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('post/<int:pk>/edit/', views.PostUpdateView.as_view(), name='post_edit'),
+    path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post_delete'),
 ]
 

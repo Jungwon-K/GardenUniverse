@@ -1,0 +1,14 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}글 삭제 - GardenUniverse{% endblock %}
+
+{% block content %}
+<h2>🗑️ 정말 이 글을 삭제하시겠어요?</h2>
+<p><strong>{{ object.title }}</strong></p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">삭제</button>
+    <a href="{% url 'post_detail' pk=object.pk %}">취소</a>
+</form>
+{% endblock %}
