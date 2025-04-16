@@ -59,7 +59,7 @@ def graph_data(request):
 
     unique_nodes = {node['id']: node for node in nodes}.values()
 
-    return JsonResponse({"nodes": list(unique_nodes), "links": links})
+    return JsonResponse({"nodes": list(unique_nodes), "links": links}, json_dumps_params={'ensure_ascii': False})
 
 def graph_view(request):
     return render(request, 'blog/graph.html')
