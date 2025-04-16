@@ -23,6 +23,19 @@ def post_create(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
+
+    session_key = f'viewed_post_{post.pk}'
+    user_is_admin = request.user.is_authenticated and request.user.is_staff
+    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
+
+    # 간단한 크롤러 필터링
+    is_bot = any(bot in user_agent for bot in ['bot', 'crawl', 'spider', 'slurp', 'fetch'])
+
+    if not request.session.get(session_key) and not user_is_admin and not is_bot:
+        post.views += 1
+        post.save()
+        request.session[session_key] = True  # 세션에 기록 남김
+
     post.content = render_markdown(post.content)
 
     return render(request, 'blog/post_detail.html', {'post': post})

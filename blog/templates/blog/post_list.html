@@ -9,6 +9,7 @@
         <li>
             <a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a>
             <small>({{ post.created_at|date:"Y-m-d H:i" }})</small>
+            <small>({{ post.views }} views)</small>
         </li>
     {% empty %}
         <li>작성된 글이 없습니다.</li>
