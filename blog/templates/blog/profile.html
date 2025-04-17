@@ -6,7 +6,7 @@
   <p><strong>소개:</strong> {{ profile.bio }}</p>
 
   {% if profile.cv %}
-    <p><a href="{{ profile.cv.url }}" download target="_blank">📄 이력서 다운로드</a></p>
+    <p><a href="{{ profile.cv.url }}" download>📄 PDF 다운로드</a></p>
   {% else %}
     <p>등록된 이력서가 없습니다.</p>
   {% endif %}

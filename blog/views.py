@@ -1,7 +1,7 @@
 import json
 from django.shortcuts import render, get_object_or_404
 from .models import Post, UserProfile
-from .utils import render_markdown
+from .utils import render_markdown, generate_pdf_from_bio
 from django.shortcuts import render, redirect
 from .forms import PostForm, CVUploadForm
 from django.http import JsonResponse
@@ -89,8 +89,13 @@ def profile_view(request):
             form = CVUploadForm(request.POST, request.FILES, instance=profile)
             if form.is_valid():
                 form.save()
+                generate_pdf_from_bio(profile)
                 return redirect('profile')
         else:
             form = CVUploadForm(instance=profile)
 
     return render(request, 'blog/profile.html', {'profile': profile, 'form': form})
+
+def cv_preview(request):
+    profile = UserProfile.objects.get(user=request.user)
+    return render(request, 'blog/cv_template.html', {'profile': profile})
