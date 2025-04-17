@@ -1,10 +1,9 @@
 import json
 from django.shortcuts import render, get_object_or_404
-from .models import Post
+from .models import Post, UserProfile
 from .utils import render_markdown
 from django.shortcuts import render, redirect
-from .models import Post
-from .forms import PostForm
+from .forms import PostForm, CVUploadForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView, DeleteView
@@ -79,3 +78,19 @@ def graph_view(request):
 
 def home(request):
     return render(request, 'blog/home.html')
+
+@login_required
+def profile_view(request):
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    form = None
+    if request.user.is_authenticated and request.user.is_staff:
+        if request.method == 'POST':
+            form = CVUploadForm(request.POST, request.FILES, instance=profile)
+            if form.is_valid():
+                form.save()
+                return redirect('profile')
+        else:
+            form = CVUploadForm(instance=profile)
+
+    return render(request, 'blog/profile.html', {'profile': profile, 'form': form})

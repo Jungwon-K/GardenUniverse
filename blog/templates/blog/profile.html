@@ -1,0 +1,22 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+  <h1>👤 {{ profile.user.username }}'s Profile</h1>
+
+  <p><strong>소개:</strong> {{ profile.bio }}</p>
+
+  {% if profile.cv %}
+    <p><a href="{{ profile.cv.url }}" download target="_blank">📄 이력서 다운로드</a></p>
+  {% else %}
+    <p>등록된 이력서가 없습니다.</p>
+  {% endif %}
+
+  {% if form %}
+    <h2>CV 업로드 (관리자 전용)</h2>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">업데이트</button>
+    </form>
+  {% endif %}
+{% endblock %}

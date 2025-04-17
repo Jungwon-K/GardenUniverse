@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Topic
+from .models import Post, Topic, UserProfile
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -10,3 +10,7 @@ class PostForm(forms.ModelForm):
             'topics': forms.CheckboxSelectMultiple(),
         }
         
+class CVUploadForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['bio', 'cv']
